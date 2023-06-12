@@ -7,8 +7,6 @@ from Triangle import Triangle
 from NormalVector import NormalVector
 from Vertex import Vertex
 
-EOF = -1
-
 '''
 class that lets you convert binary stl to ascii stl, not to be used directly
 '''
