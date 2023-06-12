@@ -1,3 +1,5 @@
+# Binary stl to ascii converter
+
 Can't read the contents of your stl files, but want to? 
 Use this program to convert your binary stl files to ascii, so that you can read them and make changes to them. 
 See example below for how to use it, or just implement it in your own code.
