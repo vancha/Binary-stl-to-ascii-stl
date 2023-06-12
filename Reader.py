@@ -37,25 +37,23 @@ class stlReader:
         self.data                   the array containing all number_of_triangles triangles from the stl file pointed to by filename
     '''
     def read_binary_stl(self, filename):
+
         with open(filename, 'rb') as stl_file:
-            self.Header = stl_file.read(80)
-            self.number_of_triangles =  struct.unpack_from("<L",stl_file.read(4))[0]
-            self.data = []
+            self.Header                 = stl_file.read(80)
+            self.number_of_triangles    = struct.unpack_from("<L",stl_file.read(4))[0]
+            self.data                   = []
 
             while True:
                 try:
-                    normal_vector               = stl_file.read(12)
-                    vertex_1                    = stl_file.read(12)
-                    vertex_2                    = stl_file.read(12)
-                    vertex_3                    = stl_file.read(12)
-                    attribute_byte_count        = stl_file.read(2)
-                    #if EOF not in [normal_vector, vertex_1, vertex_2, vertex_3,attribute_byte_count]:
-                    normal_vector = NormalVector(struct.unpack_from("<f",normal_vector[0:4])[0],struct.unpack_from("<f",normal_vector[4:8])[0],struct.unpack_from("<f",normal_vector[8:12])[0])
-                    vertex_v1   = Vertex(struct.unpack_from("<f",vertex_1[0:4])[0], struct.unpack_from("<f",vertex_1[4:8])[0], struct.unpack_from("<f",vertex_1[8:12])[0])
-                    vertex_v2   = Vertex(struct.unpack_from("<f",vertex_2[0:4])[0], struct.unpack_from("<f",vertex_2[4:8])[0], struct.unpack_from("<f",vertex_2[8:12])[0])
-                    vertex_v3   = Vertex(struct.unpack_from("<f",vertex_3[0:4])[0], struct.unpack_from("<f",vertex_3[4:8])[0], struct.unpack_from("<f",vertex_3[8:12])[0])
-                    self.data.append(Triangle(normal_vector, [vertex_v1, vertex_v2, vertex_v3]))
-                except struct.error:
+                    normal_vector           = NormalVector.from_bytes( stl_file.read(12) )
+                    vertex_v1               = Vertex.from_bytes( stl_file.read(12) )
+                    vertex_v2               = Vertex.from_bytes( stl_file.read(12) )
+                    vertex_v3               = Vertex.from_bytes( stl_file.read(12) )
+                    attribute_byte_count    = stl_file.read(2)
+
+                    self.data.append( Triangle( normal_vector, [ vertex_v1, vertex_v2, vertex_v3 ] ))
+
+                except struct.error:#this means we have read until the end of the binary file, we can likely safely break
                     break
     '''
     An ASCII stl file is structured like this:
@@ -78,7 +76,7 @@ class stlReader:
                 exported_file.write(triangle.to_ascii())
             exported_file.write("endsolid \n")
     '''
-    not implemented cause i'm lazy
+    not implemented cause  lazy
     '''
     def read_ascii_stl(self, filename):
         pass
