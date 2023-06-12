@@ -34,14 +34,14 @@ class stlReader:
 
         self.header                 the first 80 bytes of the stl file pointed to by filename
         self.number_of_triangles    the total number of triangles from the stl file pointed to by filename
-        self.data                   the array containing all number_of_triangles triangles from the stl file pointed to by filename
+        self.triangles              the array containing all number_of_triangles triangles from the stl file pointed to by filename
     '''
     def read_binary_stl(self, filename):
 
         with open(filename, 'rb') as stl_file:
             self.Header                 = stl_file.read(80)
             self.number_of_triangles    = struct.unpack_from("<L",stl_file.read(4))[0]
-            self.data                   = []
+            self.triangles              = []
 
             while True:
                 try:
@@ -51,7 +51,7 @@ class stlReader:
                     vertex_v3               = Vertex.from_bytes( stl_file.read(12) )
                     attribute_byte_count    = stl_file.read(2)
 
-                    self.data.append( Triangle( normal_vector, [ vertex_v1, vertex_v2, vertex_v3 ] ))
+                    self.triangles.append( Triangle( normal_vector, [ vertex_v1, vertex_v2, vertex_v3 ] ))
 
                 except struct.error:#this means we have read until the end of the binary file, we can likely safely break
                     break
@@ -69,10 +69,10 @@ class stlReader:
 
     this function exports the read file as an ascii stl file, useful for conversion of binary stl to ascii stl
     '''
-    def export_as_stl_ascii(self, destination_filename):
+    def export_as_ascii_stl(self, destination_filename):
         with open(destination_filename, "w") as exported_file:
             exported_file.write("solid \n")
-            for triangle in self.data:
+            for triangle in self.triangles:
                 exported_file.write(triangle.to_ascii())
             exported_file.write("endsolid \n")
     '''
@@ -85,7 +85,10 @@ class stlReader:
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         exit('call this file with two arguments:\n1:\tThe file to read\n2:\tThe file to export to')
-    binary_file_location = sys.argv[1]#'/home/vancha/Documenten/python/stl_reader/binary_example.stl'
-    ascii_file_location = sys.argv[2]#'/home/vancha/Documenten/python/stl_reader/ascii_example.stl'
-    stlreader = stlReader( binary_file_location )
-    stlreader.export_as_stl_ascii( ascii_file_location )
+    
+    binary_file_location    = sys.argv[1]
+    ascii_file_location     = sys.argv[2]
+    
+    stlreader               = stlReader( binary_file_location )
+
+    stlreader.export_as_ascii_stl( ascii_file_location )

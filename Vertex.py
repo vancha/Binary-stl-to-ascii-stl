@@ -1,3 +1,5 @@
+import struct
+
 ''' 
 Every vertex consists of three points, describing it's x, y and z location in 3d space
 '''
