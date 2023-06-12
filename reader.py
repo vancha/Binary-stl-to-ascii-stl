@@ -8,9 +8,13 @@ from NormalVector import NormalVector
 from Vertex import Vertex
 
 EOF = -1
-
+'''
+class that lets you convert binary stl to ascii stl, not to be used directly
+'''
 class stlReader:
-
+    '''
+    initializes stlReader with an stl file, loads stl file data to self
+    '''
     def __init__(self, filename):
         if self.is_binary_stl(filename):
             self.read_binary_stl(filename)
@@ -74,7 +78,9 @@ class stlReader:
             for triangle in self.data:
                 exported_file.write(triangle.to_ascii())
             exported_file.write("endsolid \n")
-
+    '''
+    not implemented cause i'm lazy
+    '''
     def read_ascii_stl(self, filename):
         pass
 
