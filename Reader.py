@@ -7,6 +7,8 @@ from Triangle import Triangle
 from NormalVector import NormalVector
 from Vertex import Vertex
 
+EOF = -1
+
 '''
 class that lets you convert binary stl to ascii stl, not to be used directly
 '''
@@ -74,6 +76,15 @@ class stlReader:
             for triangle in self.triangles:
                 exported_file.write(triangle.to_ascii())
             exported_file.write("endsolid \n")
+
+    '''
+    This is a utility function, it exports the entire list of triangles as a list of points,which throws away 2 of the 3 vertices per triangle
+    '''
+    def as_point_list(self):
+        point_list = []
+        for triangle in self.triangles:
+            point_list.append( triangle.vertices[0] )
+        return point_list
     ''' 
     reads the file pointed to by filename as a ascii stl file
     sets the following values:
@@ -119,5 +130,7 @@ if __name__ == '__main__':
     ascii_file_location     = sys.argv[2]
     
     stlreader               = stlReader( binary_file_location )
-
-    stlreader.export_as_ascii_stl( ascii_file_location )
+    point_list              = stlreader.as_point_list()
+    for point in point_list:
+        print(f'point: {point.to_ascii()}')
+    #stlreader.export_as_ascii_stl( ascii_file_location )
