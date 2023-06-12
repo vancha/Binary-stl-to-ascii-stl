@@ -34,7 +34,7 @@ class stlReader:
             self.vertices = vertex_array
 
         def to_ascii(self):
-            return f"facet {self.normal_vector.to_ascii()}\n    outer loop\n        {self.vertices[0].to_ascii()}\n        {self.vertices[1].to_ascii()}\n        {self.vertices[2].to_ascii()}\n    endloop\nendfacet"
+            return f"facet {self.normal_vector.to_ascii()}\n    outer loop\n        {self.vertices[0].to_ascii()}\n        {self.vertices[1].to_ascii()}\n        {self.vertices[2].to_ascii()}\n    endloop\nendfacet\n"
 
 
     def __init__(self, filename):
@@ -65,10 +65,10 @@ class stlReader:
                     vertex_3                    = stl_file.read(12)
                     attribute_byte_count        = stl_file.read(2)
                     if EOF not in [normal_vector, vertex_1, vertex_2, vertex_3,attribute_byte_count]:
-                        normal_vector = self.NormalVector(struct.unpack_from("<f",normal_vector[0:4]),struct.unpack_from("<f",normal_vector[4:8]),struct.unpack_from("<f",normal_vector[8:12]))
-                        vertex_v1   = self.Vertex(struct.unpack_from("<f",vertex_1[0:4]), struct.unpack_from("<f",vertex_1[4:8]), struct.unpack_from("<f",vertex_1[8:12]))
-                        vertex_v2   = self.Vertex(struct.unpack_from("<f",vertex_2[0:4]), struct.unpack_from("<f",vertex_2[4:8]), struct.unpack_from("<f",vertex_2[8:12]))
-                        vertex_v3   = self.Vertex(struct.unpack_from("<f",vertex_3[0:4]), struct.unpack_from("<f",vertex_3[4:8]), struct.unpack_from("<f",vertex_3[8:12]))
+                        normal_vector = self.NormalVector(struct.unpack_from("<f",normal_vector[0:4])[0],struct.unpack_from("<f",normal_vector[4:8])[0],struct.unpack_from("<f",normal_vector[8:12])[0])
+                        vertex_v1   = self.Vertex(struct.unpack_from("<f",vertex_1[0:4])[0], struct.unpack_from("<f",vertex_1[4:8])[0], struct.unpack_from("<f",vertex_1[8:12])[0])
+                        vertex_v2   = self.Vertex(struct.unpack_from("<f",vertex_2[0:4])[0], struct.unpack_from("<f",vertex_2[4:8])[0], struct.unpack_from("<f",vertex_2[8:12])[0])
+                        vertex_v3   = self.Vertex(struct.unpack_from("<f",vertex_3[0:4])[0], struct.unpack_from("<f",vertex_3[4:8])[0], struct.unpack_from("<f",vertex_3[8:12])[0])
                         self.data.append(self.Triangle(normal_vector, [vertex_v1, vertex_v2, vertex_v3]))
                     else:
                         print('found eof')
@@ -78,6 +78,12 @@ class stlReader:
                     break
     
     def export_as_stl_ascii(self, destination_filename):
+        with open(destination_filename, "w") as exported_file:
+            exported_file.write("solid \n")
+            for triangle in self.data:
+                exported_file.write(triangle.to_ascii())
+            exported_file.write("endsolid \n")
+
         #Solid name
         
         #facet normal n1 n2 n3
@@ -99,8 +105,9 @@ ascii_file_location = '/home/vancha/Documenten/python/stl_reader/ascii_example.s
 
 
 stlreader = stlReader(file_location)
-print(f'header: {stlreader.Header}')
-num_triangles = struct.unpack_from("<L",stlreader.number_of_triangles)[0]
+stlreader.export_as_stl_ascii("/home/vancha/Documenten/python/stl_reader/converted_ascii.stl")
+#print(f'header: {stlreader.Header}')
+#num_triangles = struct.unpack_from("<L",stlreader.number_of_triangles)[0]
 
-print(f'vertices: {num_triangles}')
+#print(f'vertices: {num_triangles}')
 
