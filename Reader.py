@@ -55,8 +55,7 @@ class stlReader:
                     vertex_v2   = Vertex(struct.unpack_from("<f",vertex_2[0:4])[0], struct.unpack_from("<f",vertex_2[4:8])[0], struct.unpack_from("<f",vertex_2[8:12])[0])
                     vertex_v3   = Vertex(struct.unpack_from("<f",vertex_3[0:4])[0], struct.unpack_from("<f",vertex_3[4:8])[0], struct.unpack_from("<f",vertex_3[8:12])[0])
                     self.data.append(Triangle(normal_vector, [vertex_v1, vertex_v2, vertex_v3]))
-                except Exception as e:
-                    print(f'Done reading the file, most likely read until EOF: {str(e)}')
+                except struct.error:
                     break
     '''
     An ASCII stl file is structured like this:
