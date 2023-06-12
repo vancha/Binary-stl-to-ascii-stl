@@ -8,6 +8,7 @@ from NormalVector import NormalVector
 from Vertex import Vertex
 
 EOF = -1
+
 '''
 class that lets you convert binary stl to ascii stl, not to be used directly
 '''
@@ -39,7 +40,7 @@ class stlReader:
     def read_binary_stl(self, filename):
 
         with open(filename, 'rb') as stl_file:
-            self.Header                 = stl_file.read(80)
+            self.header                 = stl_file.read(80)
             self.number_of_triangles    = struct.unpack_from("<L",stl_file.read(4))[0]
             self.triangles              = []
 
@@ -75,16 +76,46 @@ class stlReader:
             for triangle in self.triangles:
                 exported_file.write(triangle.to_ascii())
             exported_file.write("endsolid \n")
-    '''
-    not implemented cause  lazy
+    ''' 
+    reads the file pointed to by filename as a ascii stl file
+    sets the following values:
+
+        self.header                 the first line of the stl file pointed to by filename
+        self.triangles              the array containing all number_of_triangles triangles from the stl file pointed to by filename
     '''
     def read_ascii_stl(self, filename):
-        pass
+        with open(filename,'r') as stl_file:
+            
+            self.header = stl_file.readline()
+            self.triangles = []
+            
+            while True:
+                try:
+                    _, _, x,y,z = stl_file.readline().strip().split(' ')#this line contains the normal
+                    normal_vector = NormalVector(x,y,z)
+                
+                    _ = stl_file.readline()#ignore the next line, which has text `outer loop`
+                
+                    _, v1x, v1y, v1z = stl_file.readline().strip().split(' ')#get vertex 1 x, y and z
+                    vertex_v1 = Vertex(v1x, v1y, v1z)
+                
+                    _, v2x, v2y, v2z = stl_file.readline().strip().split(' ')#get vertex 2 x, y and z
+                    vertex_v2 = Vertex(v2x, v2y, v2z)
+                
+                    _, v3x, v3y, v3z = stl_file.readline().strip().split(' ')#get vertex 3 x, y and z
+                    vertex_v3 = Vertex(v3x, v3y, v3z)
+                
+                    _ = stl_file.readline()#ignore the text `endloop`
+                    _ = stl_file.readline()#ignore the text `endfacet`
+                
+                    self.triangles.append( Triangle(normal_vector, [vertex_v1, vertex_v2, vertex_v3] ) ) 
+                except:
+                    break
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        exit('call this file with two arguments:\n1:\tThe file to read\n2:\tThe file to export to')
+        exit('\nCall this file with two arguments:\n1:\tThe file to read\n2:\tThe file to export to')
     
     binary_file_location    = sys.argv[1]
     ascii_file_location     = sys.argv[2]
