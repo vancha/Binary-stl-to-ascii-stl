@@ -130,7 +130,7 @@ if __name__ == '__main__':
     ascii_file_location     = sys.argv[2]
     
     stlreader               = stlReader( binary_file_location )
-    point_list              = stlreader.as_point_list()
-    for point in point_list:
-        print(f'point: {point.to_ascii()}')
-    #stlreader.export_as_ascii_stl( ascii_file_location )
+    #point_list              = stlreader.as_point_list()
+    #for point in point_list:
+    #    print(f'point: {point.to_ascii()}')
+    stlreader.export_as_ascii_stl( ascii_file_location )
