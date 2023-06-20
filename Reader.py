@@ -118,17 +118,37 @@ class stlReader:
                     self.triangles.append( Triangle(normal_vector, [vertex_v1, vertex_v2, vertex_v3] ) ) 
                 except:
                     break
-
-
+    '''
+    this just stores one single vertex for every triangle in a pcd file. 
+    '''
+    def export_to_ascii_pcd(self,filename):
+        with open(filename, 'w') as pcd_file:
+            #writes the header for this pcd file
+            pcd_file.write(f"VERSION .7\nFIELDS x y z\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH {len(self.triangles)}\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS {len(self.triangles)}\nDATA ascii\n")
+            #loops over triangles
+            for triangle in self.triangles:
+                #writes only every first vertex of every triangle to the file
+                pcd_file.write(f"{triangle.vertices[0].x} {triangle.vertices[0].y} {triangle.vertices[0].z}\n")
+            
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         exit('\nCall this file with two arguments:\n1:\tThe file to read\n2:\tThe file to export to')
     
+    #the first argument is the file to read (can be binary stl or ascii stl) 
     binary_file_location    = sys.argv[1]
+    #the second argument is the file to export to (can be stl or pcd)
     ascii_file_location     = sys.argv[2]
     
+    #read the file
     stlreader               = stlReader( binary_file_location )
-    #point_list              = stlreader.as_point_list()
-    #for point in point_list:
-    #    print(f'point: {point.to_ascii()}')
+
+    #you can do the following things with this simple script:
+    
+    #export the loaded stl file as a pcd file (loses some data)
+    stlreader.export_to_ascii_pcd( ascii_file_location )
+
+    #export the loaded stl file as an ascii version of that stl file (useful for decoding binary to ascii stl)
     stlreader.export_as_ascii_stl( ascii_file_location )
+
+    #just get the points from the stl file
+    print(f'{stlreader.as_ponts_list()}')
