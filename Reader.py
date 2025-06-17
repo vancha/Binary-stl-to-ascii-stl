@@ -151,4 +151,4 @@ if __name__ == '__main__':
     stlreader.export_as_ascii_stl( ascii_file_location )
 
     #just get the points from the stl file
-    print(f'{stlreader.as_ponts_list()}')
+    print(f'{stlreader.as_point_list()}')
